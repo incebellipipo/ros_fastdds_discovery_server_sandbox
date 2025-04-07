@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  discovery:
+    image: fastdds_discovery_sandbox
+    build:
+      dockerfile: dockerfile
+    container_name: discovery
+    networks:
+      test_net:
+        ipv4_address: 172.20.0.2
+    command: fastdds discovery --server-id 0
+
+  chatter:
+    image: fastdds_discovery_sandbox
+    build:
+      dockerfile: dockerfile
+    container_name: chatter
+    environment:
+      - ROS_DISCOVERY_SERVER=172.20.0.2:11811
+    depends_on:
+      - discovery
+    networks:
+      test_net:
+        ipv4_address: 172.20.0.3
+    command: |
+      ros2 topic pub /chatter std_msgs/msg/String "{data: 'Hello World!'}"
+
+  listener:
+    image: fastdds_discovery_sandbox
+    build:
+      dockerfile: dockerfile
+    container_name: listener
+    environment:
+      - ROS_DISCOVERY_SERVER=172.20.0.2:11811
+    depends_on:
+      - discovery
+    networks:
+      test_net:
+        ipv4_address: 172.20.0.4
+    command: |
+      ros2 topic echo --timeout 100 -i /chatter std_msgs/msg/String
+
+networks:
+  test_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
