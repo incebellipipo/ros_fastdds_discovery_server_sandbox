@@ -5,6 +5,8 @@ services:
     image: fastdds_discovery_sandbox
     build:
       dockerfile: dockerfile
+      args:
+        - ROS_DISTRO=jazzy
     container_name: discovery
     networks:
       test_net:
@@ -15,6 +17,8 @@ services:
     image: fastdds_discovery_sandbox
     build:
       dockerfile: dockerfile
+      args:
+        - ROS_DISTRO=jazzy
     container_name: chatter
     environment:
       - ROS_DISCOVERY_SERVER=172.20.0.2:11811
@@ -30,6 +34,8 @@ services:
     image: fastdds_discovery_sandbox
     build:
       dockerfile: dockerfile
+      args:
+        - ROS_DISTRO=jazzy
     container_name: listener
     environment:
       - ROS_DISCOVERY_SERVER=172.20.0.2:11811
@@ -39,7 +45,7 @@ services:
       test_net:
         ipv4_address: 172.20.0.4
     command: |
-      ros2 topic echo --timeout 100 -i /chatter std_msgs/msg/String
+      ros2 topic echo /chatter std_msgs/msg/String
 
 networks:
   test_net:
