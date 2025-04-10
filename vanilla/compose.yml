@@ -1,0 +1,36 @@
+services:
+
+  chatter:
+    image: fastdds_discovery_sandbox:${ROS_DISTRO:-jazzy}
+    build:
+      dockerfile: dockerfile
+      args:
+        - ROS_DISTRO=${ROS_DISTRO:-jazzy}
+      context: ..
+    networks:
+      test_net:
+        ipv4_address: 172.20.0.3
+    command: |
+      ros2 topic pub /chatter std_msgs/msg/String "{data: 'Hello World!'}"
+
+  listener:
+    image: fastdds_discovery_sandbox:${ROS_DISTRO:-jazzy}
+    build:
+      dockerfile: dockerfile
+      args:
+        - ROS_DISTRO=${ROS_DISTRO:-jazzy}
+      context: ..
+    networks:
+      test_net:
+        ipv4_address: 172.20.0.4
+    command: |
+      ros2 topic echo /chatter std_msgs/msg/String
+
+networks:
+  test_net:
+    driver: ipvlan
+    driver_opts:
+      ipvlan_mode: l3
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

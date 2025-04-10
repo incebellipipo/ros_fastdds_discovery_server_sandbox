@@ -1,0 +1,4 @@
+<launch>
+    <executable cmd='ros2 topic echo /chatter std_msgs/msg/String' output='screen'/>
+    <executable cmd='ros2 topic pub /chatter std_msgs/msg/String "{data: \"Scrambles!\"}"' output='screen'/>
+</launch>

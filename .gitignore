@@ -1,0 +1,35 @@
+# add ignore for vim,linux,.env,windows,macOS,python,ros2
+
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+ehthumbs.db
+# Linux
+*~
+# vim
+*.swp
+*.swo
+# python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.pdb
+*.egg-info
+*.egg
+*.whl
+*.log
+# ros2
+*.rosinstall
+*.rosinstall.yaml
+*.rosinstall.yaml.lock
+*.rosinstall.lock
+# .env
+.env
+
+# .vscode
+.vscode
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json

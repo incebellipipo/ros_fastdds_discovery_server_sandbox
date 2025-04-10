@@ -1,27 +1,27 @@
-version: "3.8"
-
 services:
   discovery:
-    image: fastdds_discovery_sandbox
+    image: fastdds_discovery_sandbox:${ROS_DISTRO:-jazzy}
     build:
       dockerfile: dockerfile
+      context: ..
       args:
-        - ROS_DISTRO=jazzy
-    container_name: discovery
+        - ROS_DISTRO=${ROS_DISTRO:-jazzy}
+    environment:
+      - ROS2_EASY_MODE=172.20.0.2
     networks:
       test_net:
         ipv4_address: 172.20.0.2
     command: fastdds discovery --server-id 0
 
   chatter:
-    image: fastdds_discovery_sandbox
+    image: fastdds_discovery_sandbox:${ROS_DISTRO:-jazzy}
     build:
       dockerfile: dockerfile
+      context: ..
       args:
-        - ROS_DISTRO=jazzy
-    container_name: chatter
+        - ROS_DISTRO=${ROS_DISTRO:-jazzy}
     environment:
-      - ROS_DISCOVERY_SERVER=172.20.0.2:11811
+      - ROS2_EASY_MODE=172.20.0.2
     depends_on:
       - discovery
     networks:
@@ -31,14 +31,14 @@ services:
       ros2 topic pub /chatter std_msgs/msg/String "{data: 'Hello World!'}"
 
   listener:
-    image: fastdds_discovery_sandbox
+    image: fastdds_discovery_sandbox:${ROS_DISTRO:-jazzy}
     build:
       dockerfile: dockerfile
+      context: ..
       args:
-        - ROS_DISTRO=jazzy
-    container_name: listener
+        - ROS_DISTRO=${ROS_DISTRO:-jazzy}
     environment:
-      - ROS_DISCOVERY_SERVER=172.20.0.2:11811
+      - ROS2_EASY_MODE=172.20.0.2
     depends_on:
       - discovery
     networks:
@@ -49,7 +49,9 @@ services:
 
 networks:
   test_net:
-    driver: bridge
+    driver: ipvlan
+    driver_opts:
+      ipvlan_mode: l3
     ipam:
       config:
         - subnet: 172.20.0.0/16
